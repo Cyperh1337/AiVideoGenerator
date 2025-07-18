@@ -360,6 +360,70 @@ async def get_comfyui_status():
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+@api_router.get("/comfyui/debug")
+async def debug_comfyui_connection():
+    """Debug ComfyUI connection with detailed info"""
+    debug_info = {
+        "comfyui_url": COMFYUI_BASE_URL,
+        "timestamp": datetime.utcnow().isoformat(),
+        "tests": []
+    }
+    
+    # Test 1: Basic connection
+    try:
+        timeout = aiohttp.ClientTimeout(total=5)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            start_time = datetime.utcnow()
+            async with session.get(f"{COMFYUI_BASE_URL}/") as response:
+                end_time = datetime.utcnow()
+                debug_info["tests"].append({
+                    "test": "Basic connection",
+                    "success": True,
+                    "status": response.status,
+                    "response_time": str(end_time - start_time),
+                    "headers": dict(response.headers)
+                })
+    except Exception as e:
+        debug_info["tests"].append({
+            "test": "Basic connection",
+            "success": False,
+            "error": str(e),
+            "error_type": type(e).__name__
+        })
+    
+    # Test 2: System stats
+    try:
+        timeout = aiohttp.ClientTimeout(total=5)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            start_time = datetime.utcnow()
+            async with session.get(f"{COMFYUI_BASE_URL}/system_stats") as response:
+                end_time = datetime.utcnow()
+                if response.status == 200:
+                    data = await response.json()
+                    debug_info["tests"].append({
+                        "test": "System stats",
+                        "success": True,
+                        "status": response.status,
+                        "response_time": str(end_time - start_time),
+                        "data_preview": str(data)[:200] + "..." if len(str(data)) > 200 else str(data)
+                    })
+                else:
+                    debug_info["tests"].append({
+                        "test": "System stats",
+                        "success": False,
+                        "status": response.status,
+                        "response_time": str(end_time - start_time)
+                    })
+    except Exception as e:
+        debug_info["tests"].append({
+            "test": "System stats",
+            "success": False,
+            "error": str(e),
+            "error_type": type(e).__name__
+        })
+    
+    return debug_info
+
 @api_router.get("/comfyui/checkpoints")
 async def get_checkpoints():
     """Get available checkpoints"""
