@@ -216,13 +216,59 @@ const VideoGenerator = () => {
           <p className="text-xl text-gray-300">
             Crea video straordinari con i tuoi checkpoint e LoRA personalizzati
           </p>
-          <div className="mt-4 flex justify-center items-center space-x-2">
-            <span className="text-sm text-gray-400">ComfyUI Status:</span>
-            <span className={`text-sm font-semibold ${getStatusColor(comfyuiStatus)}`}>
-              {comfyuiStatus}
-            </span>
+          <div className="mt-4 flex justify-center items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-400">ComfyUI Status:</span>
+              <span className={`text-sm font-semibold ${getStatusColor(comfyuiStatus)}`}>
+                {comfyuiStatus}
+              </span>
+            </div>
+            <button
+              onClick={() => setShowSettings(true)}
+              className="text-sm text-blue-400 hover:text-blue-300 underline"
+            >
+              ⚙️ Configura ComfyUI
+            </button>
           </div>
         </div>
+
+        {/* Settings Modal */}
+        {showSettings && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4">
+              <h3 className="text-xl font-bold mb-4 text-purple-300">Configurazione ComfyUI</h3>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  URL ComfyUI
+                </label>
+                <input
+                  type="text"
+                  value={comfyuiUrl}
+                  onChange={(e) => setComfyuiUrl(e.target.value)}
+                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white"
+                  placeholder="http://127.0.0.1:8188"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Inserisci l'URL dove è in esecuzione ComfyUI
+                </p>
+              </div>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => updateComfyUIConfig(comfyuiUrl)}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
+                >
+                  Salva
+                </button>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
+                >
+                  Annulla
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
