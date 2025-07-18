@@ -329,12 +329,18 @@ async def set_comfyui_config(config: dict):
 async def get_comfyui_status():
     """Check ComfyUI connection status"""
     try:
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(total=5)  # 5 second timeout
+        async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.get(f"{COMFYUI_BASE_URL}/system_stats") as response:
                 if response.status == 200:
-                    return {"status": "connected", "data": await response.json()}
+                    data = await response.json()
+                    return {"status": "connected", "data": data}
                 else:
-                    return {"status": "disconnected"}
+                    return {"status": "disconnected", "error": f"HTTP {response.status}"}
+    except asyncio.TimeoutError:
+        return {"status": "error", "message": "Connection timeout"}
+    except aiohttp.ClientConnectorError as e:
+        return {"status": "error", "message": f"Connection refused: {str(e)}"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
