@@ -398,6 +398,8 @@ async def get_video_status(video_id: str):
         
         return VideoGeneration(**video_gen)
         
+    except HTTPException:
+        raise  # Re-raise HTTPException as-is
     except Exception as e:
         logger.error(f"Error getting video status: {e}")
         raise HTTPException(status_code=500, detail=str(e))
