@@ -114,7 +114,8 @@ class ComfyUIService:
     async def get_available_loras():
         """Get available LoRA models from ComfyUI"""
         try:
-            async with aiohttp.ClientSession() as session:
+            timeout = aiohttp.ClientTimeout(total=10)  # 10 second timeout
+            async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with session.get(f"{COMFYUI_BASE_URL}/object_info") as response:
                     if response.status == 200:
                         data = await response.json()
@@ -129,7 +130,14 @@ class ComfyUIService:
                         
                         return loras
                     else:
+                        logger.error(f"ComfyUI returned status {response.status}")
                         return []
+        except asyncio.TimeoutError:
+            logger.error("Timeout connecting to ComfyUI")
+            return []
+        except aiohttp.ClientConnectorError as e:
+            logger.error(f"Connection error to ComfyUI: {e}")
+            return []
         except Exception as e:
             logger.error(f"Error getting LoRAs: {e}")
             return []
