@@ -219,10 +219,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "ComfyUI API Integration"
-    - "Video Generation API"
+    - "ComfyUI Status Display"
     - "Model Selection Interface"
     - "Video Generation Form"
+    - "Generation Status Tracking"
+    - "Generation History"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -230,3 +231,5 @@ test_plan:
 agent_communication:
     - agent: "main"
       message: "Implemented ComfyUI Video Generator with full backend API integration and frontend interface. Ready for backend testing. App includes: ComfyUI API integration, checkpoint/LoRA selection, video generation with different duration types, status tracking, and generation history. User has ComfyUI running at 127.0.0.1:8188."
+    - agent: "testing"
+      message: "✅ Backend testing completed successfully. All ComfyUI API endpoints working correctly with proper error handling for ComfyUI disconnection. Video generation API creates database records properly and handles failures gracefully. Fixed minor bug in status endpoint error handling. Database integration working perfectly. All 12 backend tests passing (100% success rate). Ready for frontend testing."
