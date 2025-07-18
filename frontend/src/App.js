@@ -21,6 +21,8 @@ const VideoGenerator = () => {
   const [generationHistory, setGenerationHistory] = useState([]);
   const [comfyuiStatus, setComfyuiStatus] = useState("checking");
   const [currentGeneration, setCurrentGeneration] = useState(null);
+  const [comfyuiUrl, setComfyuiUrl] = useState("http://127.0.0.1:8188");
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     initializeApp();
