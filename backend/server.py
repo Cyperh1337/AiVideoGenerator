@@ -302,6 +302,29 @@ class ComfyUIService:
 async def root():
     return {"message": "ComfyUI Video Generator API"}
 
+@api_router.get("/comfyui/config")
+async def get_comfyui_config():
+    """Get current ComfyUI configuration"""
+    return {
+        "base_url": COMFYUI_BASE_URL,
+        "ws_url": COMFYUI_WS_URL
+    }
+
+@api_router.post("/comfyui/config")
+async def set_comfyui_config(config: dict):
+    """Set ComfyUI configuration"""
+    global COMFYUI_BASE_URL, COMFYUI_WS_URL
+    
+    if 'base_url' in config:
+        COMFYUI_BASE_URL = config['base_url']
+        COMFYUI_WS_URL = config['base_url'].replace('http://', 'ws://').replace('https://', 'wss://') + '/ws'
+    
+    return {
+        "success": True,
+        "base_url": COMFYUI_BASE_URL,
+        "ws_url": COMFYUI_WS_URL
+    }
+
 @api_router.get("/comfyui/status")
 async def get_comfyui_status():
     """Check ComfyUI connection status"""
