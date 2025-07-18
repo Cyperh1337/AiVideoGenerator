@@ -124,10 +124,13 @@ def test_backend_startup():
             # Leggi output/errori
             stdout, stderr = process.communicate()
             
+            print("   📄 OUTPUT COMPLETO:")
             if stdout:
-                print(f"   📄 Output:\n{stdout}")
+                print(f"   STDOUT:\n{stdout}")
             if stderr:
-                print(f"   📄 Errori:\n{stderr}")
+                print(f"   STDERR:\n{stderr}")
+            
+            print("   📄 FINE OUTPUT")
             
             return False
         
