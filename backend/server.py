@@ -25,8 +25,8 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # ComfyUI Configuration
-COMFYUI_BASE_URL = "http://127.0.0.1:8188"
-COMFYUI_WS_URL = "ws://127.0.0.1:8188/ws"
+COMFYUI_BASE_URL = os.environ.get('COMFYUI_URL', 'http://127.0.0.1:8188')
+COMFYUI_WS_URL = os.environ.get('COMFYUI_WS_URL', 'ws://127.0.0.1:8188/ws')
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
