@@ -29,10 +29,36 @@ const VideoGenerator = () => {
   }, []);
 
   const initializeApp = async () => {
+    await loadComfyUIConfig();
     await checkComfyUIStatus();
     await loadCheckpoints();
     await loadLoras();
     await loadGenerationHistory();
+  };
+
+  const loadComfyUIConfig = async () => {
+    try {
+      const response = await axios.get(`${API}/comfyui/config`);
+      setComfyuiUrl(response.data.base_url);
+    } catch (error) {
+      console.error("Error loading ComfyUI config:", error);
+    }
+  };
+
+  const updateComfyUIConfig = async (newUrl) => {
+    try {
+      await axios.post(`${API}/comfyui/config`, {
+        base_url: newUrl
+      });
+      setComfyuiUrl(newUrl);
+      setShowSettings(false);
+      // Refresh status and models
+      await checkComfyUIStatus();
+      await loadCheckpoints();
+      await loadLoras();
+    } catch (error) {
+      console.error("Error updating ComfyUI config:", error);
+    }
   };
 
   const checkComfyUIStatus = async () => {
