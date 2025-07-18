@@ -14,6 +14,7 @@ import asyncio
 import json
 import websockets
 import base64
+from contextlib import asynccontextmanager
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -23,15 +24,24 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
-app = FastAPI()
-
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
-
 # ComfyUI Configuration
 COMFYUI_BASE_URL = "http://127.0.0.1:8188"
 COMFYUI_WS_URL = "ws://127.0.0.1:8188/ws"
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    logging.info("Starting ComfyUI Video Generator backend...")
+    yield
+    # Shutdown
+    logging.info("Shutting down ComfyUI Video Generator backend...")
+    client.close()
+
+# Create the main app with lifespan
+app = FastAPI(lifespan=lifespan)
+
+# Create a router with the /api prefix
+api_router = APIRouter(prefix="/api")
 
 # Define Models
 class StatusCheck(BaseModel):
